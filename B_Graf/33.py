@@ -1,20 +1,24 @@
-
 class Graph:
     def __init__(self, value):
         self.value = value
         self.neighbors = []
         self.flag = None
+        self.color = None
+        self.result = True
 
     def add_neighbour(self, obj):
         if obj not in self.neighbors:
             self.neighbors.append(obj)
 
-    def dfs(self, is_visited=1):
+    def dfs_color(self, is_visited=1, color=1, signal=True):
         self.flag = is_visited
-        # a.add(self.value)
+        self.color = color
         for neighbour in self.neighbors:
             if neighbour.flag is None:
-                neighbour.dfs(is_visited=is_visited)
+                neighbour.dfs_color(is_visited=is_visited, color=3 - color)
+            if self.color == neighbour.color:
+                self.result = False
+
         # return a
 
     def __str__(self):
@@ -35,6 +39,8 @@ class Graph:
         return hash(self.value)
 
 
+
+
 class GraphList:
     def __init__(self, n):
         self.list = [0] * (n + 1)
@@ -44,15 +50,7 @@ class GraphList:
     def add_graph(self, obj):
         self.list[obj.value] = obj
 
-    # def deep_search(self):
-    #     obj: Graph = self.list[1]
-    #     obj.dfs()
-    #     result = []
-    #     for i in range(1, len(self.list)):
-    #         obj = self.list[i]
-    #         if obj.flag is not None:
-    #             result.append(obj.value)
-    #     return result
+
 
     def __str__(self):
         result = list(map(lambda x: x.value if x != 0 else 0, self.list))
@@ -69,6 +67,7 @@ def create_graph_list():
         graph2.add_neighbour(graph1)
     return graphs
 
+
 def create_graph_list_txt():
     with open('16.txt', 'r') as file:
         n, m = file.readline().split()
@@ -83,26 +82,24 @@ def create_graph_list_txt():
         return graphs
 
 
-def deep_search(graphs: GraphList):
-    is_visited = 0
+
+
+
+
+graphs = create_graph_list()
+
+
+def result(graphs):
     for i in range(1, len(graphs.list)):
         graph: Graph = graphs.list[i]
         if graph.flag is None:
-            is_visited += 1
-            graph.dfs(is_visited=is_visited)
-    result = {}
-    for j in range(1, len(graphs.list)):
-        graph: Graph = graphs.list[j]
-        if graph.flag not in result:
-            result[graph.flag] = [graph.value]
-        else:
-            result[graph.flag].append(graph.value)
-    return result
+            res = graph.dfs_color()
+            if graph.result == False:
+                return False
+    return True
 
-graphs = create_graph_list_txt()
 
-res = deep_search(graphs)
-print(len(res))
-for node in res.keys():
-    print(len(res[node]))
-    print(*res[node])
+if result(graphs) == True:
+    print('YES')
+else:
+    print('NO')
