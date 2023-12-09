@@ -102,9 +102,7 @@ def res():
         graph: Graph = graphs.list[i]
         if graph.flag == 0:
             dfs_is_cycle(graph)
-        if result == True:
-            return True
-    return False
+    return result
 
 
 ress = res()
